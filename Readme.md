@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ilya Samarin](https://up.htmlacademy.ru/javascript/19/user/504425).
-* Наставник: `Неизвестно`.
+* Наставник: [Анастасия Шишова](https://htmlacademy.ru/profile/anashi).
 
 ---
 
