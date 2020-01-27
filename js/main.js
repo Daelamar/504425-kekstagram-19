@@ -8,6 +8,15 @@ var MAX_AVATARS = 6;
 var MIN_COMMENTS = 1;
 var MAX_COMMENTS = 2;
 
+// Находим шаблон для отрисовки фото
+var photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
+
+// Находим блок для отрисовки фотографий пользователей
+var photoListElement = document.querySelector('.pictures');
+
+// Создаем фрагмент
+var fragment = document.createDocumentFragment();
+
 // Создаем массив имен
 var names = [
   'Светлана',
@@ -81,4 +90,27 @@ var getPhotos = function (photos) {
   }
   return mockArr;
 };
+
+// Функция создания мага ( рендеринг комментария,лайков и т.д )
+var renderPhoto = function (photo) {
+  var photoElement = photoTemplate.cloneNode(true);
+
+  photoElement.querySelector('.picture__img').src = photo.url;
+  photoElement.querySelector('.picture__img').alt = photo.description;
+  photoElement.querySelector('.picture__comments').textContent = photo.likes;
+  photoElement.querySelector('.picture__likes').textContent = photo.comments;
+
+
+  return photoElement;
+};
+
+// Отрисуем список фото на странице
+var getPhotoList = function (array) {
+  for (var i = 0; i < array.length; i++) {
+    fragment.appendChild(renderPhoto(array[i]));
+  }
+  photoListElement.appendChild(fragment);
+};
+
 getPhotos(NUMBER_OF_PHOTOS);
+getPhotoList(mockArr);
