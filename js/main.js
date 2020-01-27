@@ -24,7 +24,7 @@ var names = [
   'Виктор',
   'Пелагея',
   'Василиса',
-  'Любава'
+  'Любава',
 ];
 
 // Создаем массив комментариев
@@ -34,7 +34,7 @@ var messageArr = [
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
   'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
 // // Создаем пустой массив, в который будем закидывать объекты
@@ -61,7 +61,7 @@ var getComment = function (numbers) {
     var comment = {
       avatar: 'img/avatar-' + getRandom(MIN_AVATARS, MAX_AVATARS) + '.svg',
       message: getMessages(getRandom(MIN_COMMENTS, MAX_COMMENTS)),
-      name: names[getRandom(1, names.length)]
+      name: names[getRandom(0, names.length - 1)],
     };
     commentsArr.push(comment);
   }
@@ -75,7 +75,7 @@ var getPhotos = function (photos) {
       url: 'photos/' + [i] + '.jpg',
       description: 'Описание фотографии',
       likes: getRandom(MIN_LIKES, MAX_LIKES),
-      comments: getComment(getRandom(MIN_COMMENTS, MAX_COMMENTS))
+      comments: getComment(getRandom(MIN_COMMENTS, MAX_COMMENTS)),
     };
     mockArr.push(mock);
   }
