@@ -1,10 +1,17 @@
 'use strict';
 
+// Колличество фото на странице
 var NUMBER_OF_PHOTOS = 25;
+
+// Максимальное и минимальное значение лайков
 var MIN_LIKES = 15;
 var MAX_LIKES = 200;
+
+// Максимальное и минимальное значение адреса у аватара
 var MIN_AVATARS = 1;
 var MAX_AVATARS = 6;
+
+// Максимальное и минимальное колличество комментариев к фотографии
 var MIN_COMMENTS = 1;
 var MAX_COMMENTS = 2;
 
@@ -13,9 +20,6 @@ var photoTemplate = document.querySelector('#picture').content.querySelector('.p
 
 // Находим блок для отрисовки фотографий пользователей
 var photoListElement = document.querySelector('.pictures');
-
-// Создаем фрагмент
-var fragment = document.createDocumentFragment();
 
 // Создаем массив имен
 var names = [
@@ -37,7 +41,7 @@ var names = [
 ];
 
 // Создаем массив комментариев
-var messageArr = [
+var messagesArr = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -46,53 +50,56 @@ var messageArr = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-// // Создаем пустой массив, в который будем закидывать объекты
-var mockArr = [];
+// Функция случайного числа в диапазоне
+var getRandomNumber = function (min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
-// Создаем функцию получения сообщений в комментарии
+// Функция возврата случайного элемента из массива
+var getRandomItem = function (array) {
+  return array[getRandomNumber(0, array.length - 1)];
+};
+
+// Функция получения случайного сообщения в комментарий
 var getMessages = function (number) {
   var message = [];
-  for (var i = 1; i <= number; i += 1) {
-    message.push(messageArr[getRandom(0, messageArr.length - 1)]);
+  for (var i = 1; i <= number; i++) {
+    message.push(getRandomItem(messagesArr));
   }
   return message.join(' ');
 };
 
-// Функция случайного числа в диапазоне
-var getRandom = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-// Создаем функцию по генерации комментария
-var getComment = function (numbers) {
+// Функция получения комментария
+var getComment = function (number) {
   var commentsArr = [];
-  for (var i = 1; i <= numbers; i++) {
+  for (var i = 1; i <= number; i++) {
     var comment = {
-      avatar: 'img/avatar-' + getRandom(MIN_AVATARS, MAX_AVATARS) + '.svg',
-      message: getMessages(getRandom(MIN_COMMENTS, MAX_COMMENTS)),
-      name: names[getRandom(0, names.length - 1)],
+      avatar: 'img/avatar-' + getRandomNumber(MIN_AVATARS, MAX_AVATARS) + '.svg',
+      message: getMessages(getRandomNumber(MIN_COMMENTS, MAX_COMMENTS)),
+      name: getRandomItem(names),
     };
     commentsArr.push(comment);
   }
   return commentsArr;
 };
 
-// Создаем функцию генерации фото в массив
-var getPhotos = function (photos) {
-  for (var i = 1; i <= photos; i++) {
-    var mock = {
+// Создаем функцию генерации фото и добавления их в массив
+var createPhoto = function (number) {
+  var photoArr = [];
+  for (var i = 1; i <= number; i++) {
+    var photo = {
       url: 'photos/' + [i] + '.jpg',
       description: 'Описание фотографии',
-      likes: getRandom(MIN_LIKES, MAX_LIKES),
-      comments: getComment(getRandom(MIN_COMMENTS, MAX_COMMENTS)),
+      likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
+      comments: getComment(getRandomNumber(MIN_COMMENTS, MAX_COMMENTS)),
     };
-    mockArr.push(mock);
+    photoArr.push(photo);
   }
-  return mockArr;
+  return photoArr;
 };
 
-// Функция создания мага ( рендеринг комментария,лайков и т.д )
-var renderPhoto = function (photo) {
+// Функция заполнения html-элементов фотографии ( адрес,комментарий и т.д. )
+var createPhotoElement = function (photo) {
   var photoElement = photoTemplate.cloneNode(true);
 
   photoElement.querySelector('.picture__img').src = photo.url;
@@ -100,17 +107,16 @@ var renderPhoto = function (photo) {
   photoElement.querySelector('.picture__comments').textContent = photo.comments.length;
   photoElement.querySelector('.picture__likes').textContent = photo.likes;
 
-
   return photoElement;
 };
 
-// Отрисуем список фото на странице
-var getPhotoList = function (array) {
+// Функция отрисовки фото на странице
+var renderPhotoList = function (array) {
+  var fragment = document.createDocumentFragment();
   for (var i = 0; i < array.length; i++) {
-    fragment.appendChild(renderPhoto(array[i]));
+    fragment.appendChild(createPhotoElement(array[i]));
   }
   photoListElement.appendChild(fragment);
 };
 
-getPhotos(NUMBER_OF_PHOTOS);
-getPhotoList(mockArr);
+renderPhotoList(createPhoto(NUMBER_OF_PHOTOS));
