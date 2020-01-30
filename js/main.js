@@ -21,6 +21,9 @@ var photoTemplate = document.querySelector('#picture').content.querySelector('.p
 // Находим блок для отрисовки фотографий пользователей
 var photoListElement = document.querySelector('.pictures');
 
+// Находим блок большого фото
+var bigPhotoElement = document.querySelector('.big-picture');
+
 // Создаем массив имен
 var names = [
   'Светлана',
@@ -119,4 +122,32 @@ var renderPhotoList = function (array) {
   photoListElement.appendChild(fragment);
 };
 
+// Функция рендеринга комментариев для полноэкранного фото
+var renderComment = function () {
+  var commentsList = bigPhotoElement.querySelector('social__comments');
+  var comments = bigPhotoElement.querySelectorAll('social__comment');
+  for (var i = 1; i <= comments.length; i++) {
+    commentsList.removeChild(i);
+  }
+};
+
+
+// Функция для показа полноэкранной фотографии
+var getBigPicture = function (photo) {
+  bigPhotoElement.querySelector('.big-picture__img').firstElementChild.setAttribute('src', photo.url);
+  bigPhotoElement.querySelector('.likes-count').textContent = photo.likes;
+  bigPhotoElement.querySelector('.social__caption').textContent = photo.description;
+  bigPhotoElement.querySelector('.comments-count').textContent = photo.comments.length;
+
+  renderComment();
+  // bigPhotoElement.querySelector('social__picture').src = photo.comments.avatar;
+  // bigPhotoElement.querySelector('social__picture').alt = photo.comments.name;
+  // bigPhotoElement.querySelector('social__text').textContent = photo.comments.message;
+
+  bigPhotoElement.querySelector('.social__comment-count').classList.add('hidden');
+  bigPhotoElement.querySelector('.comments-loader').classList.add('hidden');
+  bigPhotoElement.classList.remove('hidden');
+};
+
 renderPhotoList(createPhoto(NUMBER_OF_PHOTOS));
+getBigPicture(createPhoto(NUMBER_OF_PHOTOS)[0]);
