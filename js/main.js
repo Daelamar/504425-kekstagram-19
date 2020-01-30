@@ -24,6 +24,9 @@ var photoListElement = document.querySelector('.pictures');
 // Находим блок большого фото
 var bigPhotoElement = document.querySelector('.big-picture');
 
+// Находим шаблоны комментариев
+var comments = bigPhotoElement.querySelectorAll('.social__comment');
+
 // Создаем массив имен
 var names = [
   'Светлана',
@@ -101,7 +104,7 @@ var createPhoto = function (number) {
   return photoArr;
 };
 
-// Функция заполнения html-элементов фотографии ( адрес,комментарий и т.д. )
+// Функция заполнения html-элементов маленькой фотографии ( адрес,комментарий и т.д. )
 var createPhotoElement = function (photo) {
   var photoElement = photoTemplate.cloneNode(true);
 
@@ -112,8 +115,18 @@ var createPhotoElement = function (photo) {
 
   return photoElement;
 };
+// Функция заполнения html-элементов комментария к большому фото ( аватар, текст )
+var createCommentElement = function (array) {
+  var commentElement = comments[0].cloneNode(true);
 
-// Функция отрисовки фото на странице
+  commentElement.querySelector('.social__picture').setAttribute('src', array.avatar);
+  commentElement.querySelector('.social__picture').setAttribute('alt', array.name);
+  commentElement.querySelector('.social__text').textContent = array.message;
+
+  return commentElement;
+};
+
+// Функция рендеринга маленьких фото на странице
 var renderPhotoList = function (array) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < array.length; i++) {
@@ -123,30 +136,33 @@ var renderPhotoList = function (array) {
 };
 
 // Функция рендеринга комментариев для полноэкранного фото
-var renderComment = function () {
-  var commentsList = bigPhotoElement.querySelector('social__comments');
-  var comments = bigPhotoElement.querySelectorAll('social__comment');
-  for (var i = 1; i <= comments.length; i++) {
-    commentsList.removeChild(i);
+var renderComment = function (array) {
+  var commentsList = bigPhotoElement.querySelector('.social__comments');
+  var fragment = document.createDocumentFragment();
+
+  while (commentsList.firstChild) {
+    commentsList.removeChild(commentsList.firstChild);
   }
+
+  for (var i = 0; i < array.length; i++) {
+    fragment.appendChild(createCommentElement(array[i]));
+  }
+  commentsList.appendChild(fragment);
 };
 
-
-// Функция для показа полноэкранной фотографии
+// Функция для рендеринга полноэкранной фотографии
 var getBigPicture = function (photo) {
+  var body = document.querySelector('body');
+
   bigPhotoElement.querySelector('.big-picture__img').firstElementChild.setAttribute('src', photo.url);
   bigPhotoElement.querySelector('.likes-count').textContent = photo.likes;
   bigPhotoElement.querySelector('.social__caption').textContent = photo.description;
   bigPhotoElement.querySelector('.comments-count').textContent = photo.comments.length;
-
-  renderComment();
-  // bigPhotoElement.querySelector('social__picture').src = photo.comments.avatar;
-  // bigPhotoElement.querySelector('social__picture').alt = photo.comments.name;
-  // bigPhotoElement.querySelector('social__text').textContent = photo.comments.message;
-
+  renderComment(photo.comments);
   bigPhotoElement.querySelector('.social__comment-count').classList.add('hidden');
   bigPhotoElement.querySelector('.comments-loader').classList.add('hidden');
   bigPhotoElement.classList.remove('hidden');
+  body.classList.add('modal-open');
 };
 
 renderPhotoList(createPhoto(NUMBER_OF_PHOTOS));
