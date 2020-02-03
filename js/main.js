@@ -1,5 +1,8 @@
 'use strict';
 
+var ESC_KEY = 27;
+var ENTER_KEY = 13;
+
 // Колличество фото на странице
 var NUMBER_OF_PHOTOS = 25;
 
@@ -35,6 +38,15 @@ var pictureCommentsCountMainElement = bigPhotoElement.querySelector('.social__co
 var pictureCommentsCountElement = bigPhotoElement.querySelector('.comments-count');
 var pictureCommentsLoaderElement = bigPhotoElement.querySelector('.comments-loader');
 var body = document.querySelector('body');
+
+// Находим поле загрузки фото ,форму редактирования фото и кнопку закрытия формы
+var uploadFieldElement = document.querySelector('#upload-file');
+var changePhotoFormElement = document.querySelector('.img-upload__overlay');
+var closeFormButtonElement = document.querySelector('#upload-cancel');
+
+// Находим поля хештегов и комментариев
+var hashtagsFieldElement = document.querySelector('.text__hashtags');
+var descriptionFieldElement = document.querySelector('.text__description');
 
 // Создаем массив имен
 var namesArray = [
@@ -175,6 +187,36 @@ var showBigPicture = function (photo) {
   body.classList.add('modal-open');
 };
 
+// Функция закрытия окна по нажатию ESC
+var onEscCloseFormHandler = function (evt) {
+  if (evt.keyCode === ESC_KEY && hashtagsFieldElement !== evt.target && descriptionFieldElement !== evt.target) {
+    hideFormHandler();
+  }
+};
+
+// Функция закрытия окна формы
+var hideFormHandler = function () {
+  changePhotoFormElement.classList.add('hidden');
+  document.removeEventListener('keydown', onEscCloseFormHandler);
+  body.classList.remove('modal-open');
+  uploadFieldElement.value = '';
+};
+
+// Функция открытия окна формы
+var showFormHandler = function () {
+  changePhotoFormElement.classList.remove('hidden');
+  document.addEventListener('keydown', onEscCloseFormHandler);
+  body.classList.add('modal-open');
+};
+
 renderPhotoList(photosArray);
-// renderPhotoList(createPhoto(NUMBER_OF_PHOTOS));
-showBigPicture(photosArray[0]);
+// showBigPicture(photosArray[0]);
+
+uploadFieldElement.addEventListener('change', showFormHandler);
+
+closeFormButtonElement.addEventListener('click', hideFormHandler);
+closeFormButtonElement.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEY) {
+    hideFormHandler();
+  }
+});
