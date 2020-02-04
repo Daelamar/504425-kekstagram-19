@@ -3,6 +3,11 @@
 var ESC_KEY = 27;
 var ENTER_KEY = 13;
 
+// Минимальный и максимальный размеры фото-превью
+var MIN_SCALE = 25;
+var MAX_SCALE = 100;
+var STEP = 25;
+
 // Колличество фото на странице
 var NUMBER_OF_PHOTOS = 25;
 
@@ -47,6 +52,34 @@ var closeFormButtonElement = document.querySelector('#upload-cancel');
 // Находим поля хештегов и комментариев
 var hashtagsFieldElement = document.querySelector('.text__hashtags');
 var descriptionFieldElement = document.querySelector('.text__description');
+
+// Находим кнопки размера фотографии и поле для значения, так же саму фото-превью
+var smallerScaleButtonElement = changePhotoFormElement.querySelector('.scale__control--smaller');
+var biggerScaleButtonElement = changePhotoFormElement.querySelector('.scale__control--bigger');
+var scaleValueElement = changePhotoFormElement.querySelector('.scale__control--value');
+var previewImgElement = document.querySelector('.img-upload__preview').firstElementChild;
+
+// Находим список эффектов и инпуты фильтров
+var effectsListElement = document.querySelector('.effects__list');
+var effectInputsArray = effectsListElement.querySelectorAll('.effects__radio');
+
+// Функция уменьшения размера фото-превью
+var smallerPreviewImgHandler = function () {
+  var scale = parseInt(scaleValueElement.value, 10);
+  if (scale > MIN_SCALE) {
+    previewImgElement.style.transform = 'scale(' + (scale - STEP) / 100 + ')';
+    scaleValueElement.value = (scale - STEP) + '%';
+  }
+};
+
+// Функция увеличения размера фото-превью
+var biggerPreviewImgHandler = function () {
+  var scale = parseInt(scaleValueElement.value, 10);
+  if (scale < MAX_SCALE) {
+    previewImgElement.style.transform = 'scale(' + (scale + STEP) / 100 + ')';
+    scaleValueElement.value = (scale + STEP) + '%';
+  }
+};
 
 // Создаем массив имен
 var namesArray = [
@@ -187,6 +220,22 @@ var showBigPicture = function (photo) {
   body.classList.add('modal-open');
 };
 
+// Функция добавления класса при смене фильтра
+var changeEffectPhoto = function (input) {
+  input.addEventListener('change', function () {
+    previewImgElement.classList = '';
+    previewImgElement.classList.add('effects__preview--' + input.value);
+  });
+};
+
+// Функция  с циклом добавления обработчиков на кнопки смены эффекта через функцию
+var addEffectListeners = function (array) {
+  for (var i = 0; i < array.length; i++) {
+    var input = array[i];
+    changeEffectPhoto(input);
+  }
+};
+
 // Функция закрытия окна по нажатию ESC
 var onEscCloseFormHandler = function (evt) {
   if (evt.keyCode === ESC_KEY && hashtagsFieldElement !== evt.target && descriptionFieldElement !== evt.target) {
@@ -205,6 +254,8 @@ var hideFormHandler = function () {
 // Функция открытия окна формы
 var showFormHandler = function () {
   changePhotoFormElement.classList.remove('hidden');
+  addEffectListeners(effectInputsArray);
+  scaleValueElement.value = MAX_SCALE + '%';
   document.addEventListener('keydown', onEscCloseFormHandler);
   body.classList.add('modal-open');
 };
@@ -213,6 +264,8 @@ renderPhotoList(photosArray);
 // showBigPicture(photosArray[0]);
 
 uploadFieldElement.addEventListener('change', showFormHandler);
+smallerScaleButtonElement.addEventListener('click', smallerPreviewImgHandler);
+biggerScaleButtonElement.addEventListener('click', biggerPreviewImgHandler);
 
 closeFormButtonElement.addEventListener('click', hideFormHandler);
 closeFormButtonElement.addEventListener('keydown', function (evt) {
