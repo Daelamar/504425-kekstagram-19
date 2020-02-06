@@ -63,23 +63,13 @@ var previewImgElement = document.querySelector('.img-upload__preview').firstElem
 var effectsListElement = document.querySelector('.effects__list');
 var effectInputsArray = effectsListElement.querySelectorAll('.effects__radio');
 
-// Функция уменьшения размера фото-превью
-var smallerPreviewImgHandler = function () {
-  var scale = parseInt(scaleValueElement.value, 10);
-  if (scale > MIN_SCALE) {
-    previewImgElement.style.transform = 'scale(' + (scale - STEP) / 100 + ')';
-    scaleValueElement.value = (scale - STEP) + '%';
-  }
-};
+// Находим контейнер слайдера и поле значений слайдера
+var sliderBoxElement = document.querySelector('.img-upload__effect-level');
+var sliderEffectInputElement = document.querySelector('.effect-level__value');
 
-// Функция увеличения размера фото-превью
-var biggerPreviewImgHandler = function () {
-  var scale = parseInt(scaleValueElement.value, 10);
-  if (scale < MAX_SCALE) {
-    previewImgElement.style.transform = 'scale(' + (scale + STEP) / 100 + ')';
-    scaleValueElement.value = (scale + STEP) + '%';
-  }
-};
+// Находим ползунок и контейнер,в котором он движется
+var sliderLineElement = document.querySelector('.effect-level__line');
+var sliderPinElement = document.querySelector('.effect-level__pin');
 
 // Создаем массив имен
 var namesArray = [
@@ -109,6 +99,71 @@ var messagesArray = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
+
+// СОздаем массив фильтров(эффектов) для формы
+var filters = [
+  {
+    name: 'none',
+    class: 'effects__preview--none',
+    filterName: '',
+    valueIntensity: function () {
+      return ('filter:' + '');
+    },
+  },
+  {
+    name: 'chrome',
+    class: 'effects__preview--chrome',
+    filterName: 'grayscale',
+    minValue: 0,
+    maxValue: 1,
+    valueIntensity: function (value) {
+      return (this.filterName + '(' + value + ')');
+    },
+  },
+  {
+    name: 'sepia',
+    class: 'effects__preview--sepia',
+    filterName: 'sepia',
+    minValue: 0,
+    maxValue: 1,
+    valueIntensity: function (value) {
+      return (this.filterName + '(' + value + ')');
+    },
+  },
+  {
+    name: 'marvin',
+    class: 'effects__preview--marvin',
+    filterName: 'invert',
+    minValue: 0,
+    maxValue: 100,
+    valueIntensity: function (value) {
+      return (this.filterName + '(' + value + '%)');
+    },
+  },
+  {
+    name: 'phobos',
+    class: 'effects__preview--phobos',
+    filterName: 'blur',
+    minValue: 0,
+    maxValue: 3,
+    valueIntensity: function (value) {
+      return (this.filterName + '(' + value + 'px)');
+    },
+  },
+  {
+    name: 'heat',
+    class: 'effects__preview--heat',
+    filterName: 'brightness',
+    minValue: 1,
+    maxValue: 3,
+    valueIntensity: function (value) {
+      return (this.filterName + '(' + value + ')');
+    },
+  },
+];
+
+// Создаем переменную текущего фильтра
+var currentFilter = filters[0];
 
 // Функция случайного числа в диапазоне
 var getRandomNumber = function (min, max) {
@@ -220,25 +275,9 @@ var showBigPicture = function (photo) {
   body.classList.add('modal-open');
 };
 
-// Функция добавления класса при смене фильтра
-var changeEffectPhoto = function (input) {
-  input.addEventListener('change', function () {
-    previewImgElement.classList = '';
-    previewImgElement.classList.add('effects__preview--' + input.value);
-  });
-};
-
-// Функция  с циклом добавления обработчиков на кнопки смены эффекта через функцию
-var addEffectListeners = function (array) {
-  for (var i = 0; i < array.length; i++) {
-    var input = array[i];
-    changeEffectPhoto(input);
-  }
-};
-
 // Функция закрытия окна по нажатию ESC
 var onEscCloseFormHandler = function (evt) {
-  if (evt.keyCode === ESC_KEY && hashtagsFieldElement !== evt.target && descriptionFieldElement !== evt.target) {
+  if (evt.keyCode === ESC_KEY) {
     hideFormHandler();
   }
 };
@@ -248,7 +287,7 @@ var hideFormHandler = function () {
   changePhotoFormElement.classList.add('hidden');
   document.removeEventListener('keydown', onEscCloseFormHandler);
   body.classList.remove('modal-open');
-  uploadFieldElement.value = '';
+  resetForm();
 };
 
 // Функция открытия окна формы
@@ -257,12 +296,77 @@ var showFormHandler = function () {
   addEffectListeners(effectInputsArray);
   scaleValueElement.value = MAX_SCALE + '%';
   document.addEventListener('keydown', onEscCloseFormHandler);
+  sliderBoxElement.style.display = 'none';
   body.classList.add('modal-open');
+};
+
+// Функция переключения нужного фильтра
+var applyFilter = function (input) {
+  previewImgElement.classList.remove(currentFilter.class);
+
+  for (var i = 0; i < filters.length; i++) {
+    if (input.value === filters[i].name) {
+      currentFilter = filters[i];
+    }
+  }
+
+  previewImgElement.classList.add(currentFilter.class);
+  previewImgElement.style.filter = currentFilter.valueIntensity(currentFilter.maxValue);
+  sliderEffectInputElement.value = currentFilter.maxValue;
+
+  if (currentFilter.name === 'none') {
+    sliderBoxElement.style.display = 'none';
+  } else {
+    sliderBoxElement.style.display = 'block';
+  }
+};
+
+// Функция добавления обработчиков для смены класса при смене фильтра
+var changeEffectPhoto = function (input) {
+  input.addEventListener('change', function () {
+    applyFilter(input);
+  });
+};
+
+// Функция  с циклом добавления обработчиков на кнопки смены эффекта через функцию
+var addEffectListeners = function (array) {
+  var index;
+  for (var i = 0; i < array.length; i++) {
+    index = array[i];
+    changeEffectPhoto(index);
+  }
+};
+
+// Функция уменьшения размера фото-превью
+var smallerPreviewImgHandler = function () {
+  var scale = parseInt(scaleValueElement.value, 10);
+  if (scale > MIN_SCALE) {
+    previewImgElement.style.transform = 'scale(' + (scale - STEP) / 100 + ')';
+    scaleValueElement.value = (scale - STEP) + '%';
+  }
+};
+
+// Функция увеличения размера фото-превью
+var biggerPreviewImgHandler = function () {
+  var scale = parseInt(scaleValueElement.value, 10);
+  if (scale < MAX_SCALE) {
+    previewImgElement.style.transform = 'scale(' + (scale + STEP) / 100 + ')';
+    scaleValueElement.value = (scale + STEP) + '%';
+  }
+};
+
+// Функция сброса данных формы
+var resetForm = function () {
+  scaleValueElement.value = MAX_SCALE + '%';
+  previewImgElement.style.transform = '';
+  previewImgElement.classList = '';
+  uploadFieldElement.value = '';
 };
 
 renderPhotoList(photosArray);
 // showBigPicture(photosArray[0]);
 
+// Обработчики на поля
 uploadFieldElement.addEventListener('change', showFormHandler);
 smallerScaleButtonElement.addEventListener('click', smallerPreviewImgHandler);
 biggerScaleButtonElement.addEventListener('click', biggerPreviewImgHandler);
@@ -271,5 +375,16 @@ closeFormButtonElement.addEventListener('click', hideFormHandler);
 closeFormButtonElement.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEY) {
     hideFormHandler();
+  }
+});
+// Обработчики на поля формы для прекращения всплытия
+hashtagsFieldElement.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEY) {
+    evt.stopPropagation();
+  }
+});
+descriptionFieldElement.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEY) {
+    evt.stopPropagation();
   }
 });
