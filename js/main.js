@@ -3,6 +3,9 @@
 var ESC_KEY = 27;
 var ENTER_KEY = 13;
 
+var MAX_HASHTAGS_VALUE = 5;
+var MAX_DIGITS_HASHTAG = 20;
+
 // Минимальный и максимальный размеры фото-превью
 var MIN_SCALE = 25;
 var MAX_SCALE = 100;
@@ -62,6 +65,7 @@ var previewImgElement = document.querySelector('.img-upload__preview').firstElem
 // Находим список эффектов и инпуты фильтров
 var effectsListElement = document.querySelector('.effects__list');
 var effectInputsArray = effectsListElement.querySelectorAll('.effects__radio');
+var formElement = document.querySelector('.img-upload__form');
 
 // Находим контейнер слайдера и поле значений слайдера
 var sliderBoxElement = document.querySelector('.img-upload__effect-level');
@@ -363,6 +367,26 @@ var resetForm = function () {
   uploadFieldElement.value = '';
 };
 
+// Функция проверки на валидность
+var hashtagsFieldValidity = function () {
+  var pattern = /^[a-zA-Z0-9]+$/;
+  var checkedArray = hashtagsFieldElement.value.split(/\s+/);
+
+  var checkIndex = function (index) {
+    if (index.charAt(0) === !'#') {
+      hashtagsFieldElement.setCustomValidity('Хештег должен начинаться с символа # ');
+    } else if (!pattern.test(index)) {
+      hashtagsFieldElement.setCustomValidity('Хештег должен состоять из букв и чисел и не может содержать спецсимволы (#, @, $ и т.п.)');
+    }
+  };
+
+  // if (checkedArray.length > MAX_HASHTAGS_VALUE) {
+  // }
+  checkIndex(checkedArray[0]);
+  console.log(checkedArray);
+};
+
+
 renderPhotoList(photosArray);
 // showBigPicture(photosArray[0]);
 
@@ -388,3 +412,8 @@ descriptionFieldElement.addEventListener('keydown', function (evt) {
     evt.stopPropagation();
   }
 });
+
+//todo: Временно
+hashtagsFieldElement.addEventListener('change', hashtagsFieldValidity);
+hashtagsFieldElement.addEventListener('input', hashtagsFieldValidity);
+formElement.addEventListener('submit', hashtagsFieldValidity);
