@@ -72,8 +72,8 @@ var sliderBoxElement = document.querySelector('.img-upload__effect-level');
 var sliderEffectInputElement = document.querySelector('.effect-level__value');
 
 // Находим ползунок и контейнер,в котором он движется
-var sliderLineElement = document.querySelector('.effect-level__line');
-var sliderPinElement = document.querySelector('.effect-level__pin');
+// var sliderLineElement = document.querySelector('.effect-level__line');
+// var sliderPinElement = document.querySelector('.effect-level__pin');
 
 // Создаем массив имен
 var namesArray = [
@@ -104,7 +104,7 @@ var messagesArray = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-// СОздаем массив фильтров(эффектов) для формы
+// Создаем массив фильтров(эффектов) для формы
 var filters = [
   {
     name: 'none',
@@ -369,23 +369,38 @@ var resetForm = function () {
 
 // Функция проверки на валидность
 var hashtagsFieldValidity = function () {
-  var pattern = /^[a-zA-Z0-9]+$/;
-  var checkedArray = hashtagsFieldElement.value.split(/\s+/);
+  var pattern = /^[a-zA-Z0-9#]+$/; // Паттерн значений
+  var hashtagValue = hashtagsFieldElement.value.toLowerCase(); // Приводим массив к строчным буквам
+  var checkedArray = hashtagValue.split(/\s+/); // Сепаратор - пробел или два
+  var uniqeHashtags = []; // Массив для проверки на дубли
 
-  var checkIndex = function (index) {
-    if (index.charAt(0) === !'#') {
-      hashtagsFieldElement.setCustomValidity('Хештег должен начинаться с символа # ');
-    } else if (!pattern.test(index)) {
-      hashtagsFieldElement.setCustomValidity('Хештег должен состоять из букв и чисел и не может содержать спецсимволы (#, @, $ и т.п.)');
+  if (checkedArray.length > MAX_HASHTAGS_VALUE) {
+    hashtagsFieldElement.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
+  }
+
+  for (var i = 0; i < checkedArray.length; i++) {
+    var hashtag = checkedArray[i];
+
+    if (hashtag.length === 1 && hashtag.charAt(0) === '') {
+      hashtagsFieldElement.setCustomValidity('Хеш-теги должны быть разделены только одним пробелом');
+    } else if (hashtag.length === 1 && hashtag.charAt(0) === '#') {
+      hashtagsFieldElement.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
+    } else if (hashtag.length > MAX_DIGITS_HASHTAG) {
+      hashtagsFieldElement.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку');
+    } else if (hashtag.charAt(0) !== '#') {
+      hashtagsFieldElement.setCustomValidity('Хеш-тег должен начинаться с символа #');
+    } else if (pattern.test(hashtag) === false) {
+      hashtagsFieldElement.setCustomValidity('Хеш-тег должен состоять из букв и чисел и не может содержать спецсимволы (@, $ и т.п.)');
+    } else if (uniqeHashtags.includes(hashtag) === true) {
+      hashtagsFieldElement.setCustomValidity('Не может быть два одинаковых хеш-тега');
+    } else {
+      hashtagsFieldElement.setCustomValidity('');
     }
-  };
 
-  // if (checkedArray.length > MAX_HASHTAGS_VALUE) {
-  // }
-  checkIndex(checkedArray[0]);
-  console.log(checkedArray);
+    uniqeHashtags.push(hashtag);
+  }
+  console.log(uniqeHashtags);
 };
-
 
 renderPhotoList(photosArray);
 // showBigPicture(photosArray[0]);
@@ -414,6 +429,4 @@ descriptionFieldElement.addEventListener('keydown', function (evt) {
 });
 
 //todo: Временно
-hashtagsFieldElement.addEventListener('change', hashtagsFieldValidity);
 hashtagsFieldElement.addEventListener('input', hashtagsFieldValidity);
-formElement.addEventListener('submit', hashtagsFieldValidity);
