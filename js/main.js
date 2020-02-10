@@ -65,15 +65,15 @@ var previewImgElement = document.querySelector('.img-upload__preview').firstElem
 // Находим список эффектов и инпуты фильтров
 var effectsListElement = document.querySelector('.effects__list');
 var effectInputsArray = effectsListElement.querySelectorAll('.effects__radio');
-var formElement = document.querySelector('.img-upload__form');
+// var formElement = document.querySelector('.img-upload__form');
 
 // Находим контейнер слайдера и поле значений слайдера
 var sliderBoxElement = document.querySelector('.img-upload__effect-level');
 var sliderEffectInputElement = document.querySelector('.effect-level__value');
 
 // Находим ползунок и контейнер,в котором он движется
-// var sliderLineElement = document.querySelector('.effect-level__line');
-// var sliderPinElement = document.querySelector('.effect-level__pin');
+var sliderLineElement = document.querySelector('.effect-level__line');
+var sliderPinElement = document.querySelector('.effect-level__pin');
 
 // Создаем массив имен
 var namesArray = [
@@ -365,6 +365,7 @@ var resetForm = function () {
   previewImgElement.style.transform = '';
   previewImgElement.classList = '';
   uploadFieldElement.value = '';
+  previewImgElement.style.filter = currentFilter.valueIntensity(currentFilter.maxValue);
 };
 
 // Функция проверки на валидность
@@ -383,16 +384,22 @@ var hashtagsFieldValidity = function () {
 
     if (hashtag.length === 1 && hashtag.charAt(0) === '') {
       hashtagsFieldElement.setCustomValidity('Хеш-теги должны быть разделены только одним пробелом');
+      return;
     } else if (hashtag.length === 1 && hashtag.charAt(0) === '#') {
       hashtagsFieldElement.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
+      return;
     } else if (hashtag.length > MAX_DIGITS_HASHTAG) {
       hashtagsFieldElement.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку');
+      return;
     } else if (hashtag.charAt(0) !== '#') {
       hashtagsFieldElement.setCustomValidity('Хеш-тег должен начинаться с символа #');
+      return;
     } else if (pattern.test(hashtag) === false) {
       hashtagsFieldElement.setCustomValidity('Хеш-тег должен состоять из букв и чисел и не может содержать спецсимволы (@, $ и т.п.)');
+      return;
     } else if (uniqeHashtags.includes(hashtag) === true) {
       hashtagsFieldElement.setCustomValidity('Не может быть два одинаковых хеш-тега');
+      return;
     } else {
       hashtagsFieldElement.setCustomValidity('');
     }
@@ -428,5 +435,18 @@ descriptionFieldElement.addEventListener('keydown', function (evt) {
   }
 });
 
-//todo: Временно
 hashtagsFieldElement.addEventListener('input', hashtagsFieldValidity);
+
+sliderLineElement.addEventListener('mouseup', function (evt) {
+  var lineCoords = sliderLineElement.getBoundingClientRect(); // Линия, по которой передвигается пин
+  var lineCoordsWidth = lineCoords.width; // Ширина линии
+  var lineCoordsStart = lineCoords.left; // Начало линии
+
+  var pinCoordX = evt.clientX; // Ловим координаты клика
+  var onePercent = ((lineCoordsStart + lineCoordsWidth) - lineCoordsStart) / 100; // Высчитываем 1% от длинны линии
+
+  var valueSlider = Math.floor((pinCoordX - lineCoordsStart) / onePercent); // Значение пина в процентах
+  var valueFilter = currentFilter.minValue + (currentFilter.maxValue - currentFilter.minValue) * valueSlider / 100; // Значение фильтра в числовом эквиваленте
+
+  previewImgElement.style.filter = currentFilter.valueIntensity(valueFilter); // Ставим значение фильтра
+});
