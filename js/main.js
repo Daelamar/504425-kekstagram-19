@@ -32,8 +32,9 @@ var photoTemplate = document.querySelector('#picture').content.querySelector('.p
 // Находим блок для отрисовки фотографий пользователей
 var photoListElement = document.querySelector('.pictures');
 
-// Находим блок большого фото
+// Находим блок большого фото и кнопку его закрытия
 var bigPhotoElement = document.querySelector('.big-picture');
+var bigPhotoCloseElement = document.querySelector('.big-picture__cancel');
 
 // Находим шаблоны комментариев
 var comments = bigPhotoElement.querySelectorAll('.social__comment');
@@ -295,6 +296,13 @@ var hideFormHandler = function () {
   body.classList.remove('modal-open');
 };
 
+// Функция закрытия большого фото
+var hideBigPictureHandler = function () {
+  bigPhotoElement.classList.add('hidden');
+  document.removeEventListener('keydown', onEscCloseFormHandler);
+  body.classList.remove('modal-open');
+};
+
 // Функция открытия окна формы
 var showFormHandler = function () {
   resetForm();
@@ -405,7 +413,7 @@ var hashtagsFieldValidity = function () {
 
 renderPhotoList(photosArray);
 addEffectListeners(effectInputsArray);
-// showBigPicture(photosArray[0]);
+showBigPicture(photosArray[0]);
 
 // Обработчики на поля
 uploadFieldElement.addEventListener('change', showFormHandler);
@@ -418,6 +426,8 @@ closeFormButtonElement.addEventListener('keydown', function (evt) {
     hideFormHandler();
   }
 });
+bigPhotoCloseElement.addEventListener('click', hideBigPictureHandler);
+
 // Обработчики на поля формы для прекращения всплытия
 hashtagsFieldElement.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEY) {
