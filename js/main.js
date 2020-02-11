@@ -119,8 +119,12 @@ var filters = [
     maxValue: 1,
     defaultPercentage: 100,
     getIntensity: function (percent) {
-      // Значение фильтра в числовом эквиваленте
+      // Значение фильтра в числовом эквиваленте для вставки в стили
       return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
+    },
+    getIntensityValue: function (percent) {
+      // Значение фильтра для значения в инпут
+      return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
     },
   },
   {
@@ -133,6 +137,9 @@ var filters = [
     getIntensity: function (percent) {
       return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
     },
+    getIntensityValue: function (percent) {
+      return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
+    },
   },
   {
     name: 'marvin',
@@ -143,6 +150,9 @@ var filters = [
     defaultPercentage: 100,
     getIntensity: function (percent) {
       return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + '%)');
+    },
+    getIntensityValue: function (percent) {
+      return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
     },
   },
   {
@@ -155,6 +165,9 @@ var filters = [
     getIntensity: function (percent) {
       return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + 'px)');
     },
+    getIntensityValue: function (percent) {
+      return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
+    },
   },
   {
     name: 'heat',
@@ -165,6 +178,9 @@ var filters = [
     defaultPercentage: 100,
     getIntensity: function (percent) {
       return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
+    },
+    getIntensityValue: function (percent) {
+      return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
     },
   },
 ];
@@ -447,4 +463,5 @@ sliderLineElement.addEventListener('mouseup', function (evt) {
   var onePercent = lineCoords.width / 100; // Высчитываем 1% от длинны линии
   var valueSlider = Math.floor((evt.clientX - lineCoords.left) / onePercent); // Значение пина в процентах
   previewImgElement.style.filter = currentFilter.getIntensity(valueSlider); // Ставим значение фильтра
+  sliderEffectInputElement.value = currentFilter.getIntensityValue(valueSlider);
 });
