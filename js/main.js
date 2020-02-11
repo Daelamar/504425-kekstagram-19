@@ -73,7 +73,7 @@ var sliderEffectInputElement = document.querySelector('.effect-level__value');
 
 // Находим ползунок и контейнер,в котором он движется
 var sliderLineElement = document.querySelector('.effect-level__line');
-var sliderPinElement = document.querySelector('.effect-level__pin');
+// var sliderPinElement = document.querySelector('.effect-level__pin');
 
 // Создаем массив имен
 var namesArray = [
@@ -109,10 +109,6 @@ var filters = [
   {
     name: 'none',
     class: 'effects__preview--none',
-    filterName: '',
-    valueIntensity: function () {
-      return ('filter:' + '');
-    },
   },
   {
     name: 'chrome',
@@ -120,8 +116,10 @@ var filters = [
     filterName: 'grayscale',
     minValue: 0,
     maxValue: 1,
-    valueIntensity: function (value) {
-      return (this.filterName + '(' + value + ')');
+    defaultPercentage: 100,
+    getIntensity: function (percent) {
+      // Значение фильтра в числовом эквиваленте
+      return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
     },
   },
   {
@@ -130,8 +128,9 @@ var filters = [
     filterName: 'sepia',
     minValue: 0,
     maxValue: 1,
-    valueIntensity: function (value) {
-      return (this.filterName + '(' + value + ')');
+    defaultPercentage: 100,
+    getIntensity: function (percent) {
+      return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
     },
   },
   {
@@ -140,8 +139,9 @@ var filters = [
     filterName: 'invert',
     minValue: 0,
     maxValue: 100,
-    valueIntensity: function (value) {
-      return (this.filterName + '(' + value + '%)');
+    defaultPercentage: 100,
+    getIntensity: function (percent) {
+      return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + '%)');
     },
   },
   {
@@ -150,8 +150,9 @@ var filters = [
     filterName: 'blur',
     minValue: 0,
     maxValue: 3,
-    valueIntensity: function (value) {
-      return (this.filterName + '(' + value + 'px)');
+    defaultPercentage: 100,
+    getIntensity: function (percent) {
+      return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + 'px)');
     },
   },
   {
@@ -160,8 +161,9 @@ var filters = [
     filterName: 'brightness',
     minValue: 1,
     maxValue: 3,
-    valueIntensity: function (value) {
-      return (this.filterName + '(' + value + ')');
+    defaultPercentage: 100,
+    getIntensity: function (percent) {
+      return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
     },
   },
 ];
@@ -291,16 +293,13 @@ var hideFormHandler = function () {
   changePhotoFormElement.classList.add('hidden');
   document.removeEventListener('keydown', onEscCloseFormHandler);
   body.classList.remove('modal-open');
-  resetForm();
 };
 
 // Функция открытия окна формы
 var showFormHandler = function () {
+  resetForm();
   changePhotoFormElement.classList.remove('hidden');
-  addEffectListeners(effectInputsArray);
-  scaleValueElement.value = MAX_SCALE + '%';
   document.addEventListener('keydown', onEscCloseFormHandler);
-  sliderBoxElement.style.display = 'none';
   body.classList.add('modal-open');
 };
 
@@ -314,30 +313,24 @@ var applyFilter = function (input) {
     }
   }
 
-  previewImgElement.classList.add(currentFilter.class);
-  previewImgElement.style.filter = currentFilter.valueIntensity(currentFilter.maxValue);
-  sliderEffectInputElement.value = currentFilter.maxValue;
-
   if (currentFilter.name === 'none') {
     sliderBoxElement.style.display = 'none';
+    previewImgElement.style.filter = 'none';
   } else {
     sliderBoxElement.style.display = 'block';
+    previewImgElement.style.filter = currentFilter.getIntensity(currentFilter.defaultPercentage);
   }
+
+  previewImgElement.classList.add(currentFilter.class);
+  sliderEffectInputElement.value = currentFilter.maxValue;
 };
 
-// Функция добавления обработчиков для смены класса при смене фильтра
-var changeEffectPhoto = function (input) {
-  input.addEventListener('change', function () {
-    applyFilter(input);
-  });
-};
-
-// Функция  с циклом добавления обработчиков на кнопки смены эффекта через функцию
-var addEffectListeners = function (array) {
-  var index;
-  for (var i = 0; i < array.length; i++) {
-    index = array[i];
-    changeEffectPhoto(index);
+// Функция добавления обработчиков для смены фильтра
+var addEffectListeners = function (effectInputs) {
+  for (var i = 0; i < effectInputs.length; i++) {
+    effectInputs[i].addEventListener('change', function (evt) {
+      applyFilter(evt.target);
+    });
   }
 };
 
@@ -362,10 +355,12 @@ var biggerPreviewImgHandler = function () {
 // Функция сброса данных формы
 var resetForm = function () {
   scaleValueElement.value = MAX_SCALE + '%';
-  previewImgElement.style.transform = '';
-  previewImgElement.classList = '';
+  previewImgElement.style.transform = 'none';
+  previewImgElement.style.filter = 'none';
+  previewImgElement.classList = 'none';
+  sliderBoxElement.style.display = 'none';
   uploadFieldElement.value = '';
-  previewImgElement.style.filter = currentFilter.valueIntensity(currentFilter.maxValue);
+  currentFilter = filters[0];
 };
 
 // Функция проверки на валидность
@@ -406,10 +401,10 @@ var hashtagsFieldValidity = function () {
 
     uniqeHashtags.push(hashtag);
   }
-  console.log(uniqeHashtags);
 };
 
 renderPhotoList(photosArray);
+addEffectListeners(effectInputsArray);
 // showBigPicture(photosArray[0]);
 
 // Обработчики на поля
@@ -439,14 +434,7 @@ hashtagsFieldElement.addEventListener('input', hashtagsFieldValidity);
 
 sliderLineElement.addEventListener('mouseup', function (evt) {
   var lineCoords = sliderLineElement.getBoundingClientRect(); // Линия, по которой передвигается пин
-  var lineCoordsWidth = lineCoords.width; // Ширина линии
-  var lineCoordsStart = lineCoords.left; // Начало линии
-
-  var pinCoordX = evt.clientX; // Ловим координаты клика
-  var onePercent = ((lineCoordsStart + lineCoordsWidth) - lineCoordsStart) / 100; // Высчитываем 1% от длинны линии
-
-  var valueSlider = Math.floor((pinCoordX - lineCoordsStart) / onePercent); // Значение пина в процентах
-  var valueFilter = currentFilter.minValue + (currentFilter.maxValue - currentFilter.minValue) * valueSlider / 100; // Значение фильтра в числовом эквиваленте
-
-  previewImgElement.style.filter = currentFilter.valueIntensity(valueFilter); // Ставим значение фильтра
+  var onePercent = lineCoords.width / 100; // Высчитываем 1% от длинны линии
+  var valueSlider = Math.floor((evt.clientX - lineCoords.left) / onePercent); // Значение пина в процентах
+  previewImgElement.style.filter = currentFilter.getIntensity(valueSlider); // Ставим значение фильтра
 });
