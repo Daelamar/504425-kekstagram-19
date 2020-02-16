@@ -1,7 +1,7 @@
 'use strict';
 (function () {
-  var ESC_KEY = 27;
-  var ENTER_KEY = 13;
+  var ESC_KEY_CODE = 27;
+  var ENTER_KEY_CODE = 13;
 
   // Функция случайного числа в диапазоне
   var getRandomNumber = function (min, max) {
@@ -14,10 +14,10 @@
   };
 
   // Для передачи в другие модули
-  window.util = {
+  window.utils = {
     getRandomNumber: getRandomNumber,
     getRandomItem: getRandomItem,
-    ESC_KEY: ESC_KEY,
-    ENTER_KEY: ENTER_KEY,
+    ESC_KEY_CODE: ESC_KEY_CODE,
+    ENTER_KEY_CODE: ENTER_KEY_CODE,
   };
 })();

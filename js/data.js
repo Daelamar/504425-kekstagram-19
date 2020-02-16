@@ -48,7 +48,7 @@
   var getMessages = function (number) {
     var message = [];
     for (var i = 1; i <= number; i++) {
-      message.push(window.util.getRandomItem(messagesArray));
+      message.push(window.utils.getRandomItem(messagesArray));
     }
     return message.join(' ');
   };
@@ -58,9 +58,9 @@
     var commentsArray = [];
     for (var i = 1; i <= number; i++) {
       var comment = {
-        avatar: 'img/avatar-' + window.util.getRandomNumber(MIN_AVATARS, MAX_AVATARS) + '.svg',
-        message: getMessages(window.util.getRandomNumber(MIN_COMMENTS, MAX_COMMENTS)),
-        name: window.util.getRandomItem(namesArray),
+        avatar: 'img/avatar-' + window.utils.getRandomNumber(MIN_AVATARS, MAX_AVATARS) + '.svg',
+        message: getMessages(window.utils.getRandomNumber(MIN_COMMENTS, MAX_COMMENTS)),
+        name: window.utils.getRandomItem(namesArray),
       };
       commentsArray.push(comment);
     }
@@ -74,8 +74,8 @@
       var photo = {
         url: 'photos/' + [i] + '.jpg',
         description: 'Описание фотографии',
-        likes: window.util.getRandomNumber(MIN_LIKES, MAX_LIKES),
-        comments: getComment(window.util.getRandomNumber(MIN_COMMENTS, MAX_COMMENTS)),
+        likes: window.utils.getRandomNumber(MIN_LIKES, MAX_LIKES),
+        comments: getComment(window.utils.getRandomNumber(MIN_COMMENTS, MAX_COMMENTS)),
       };
       photoArray.push(photo);
     }

@@ -10,6 +10,9 @@
   var MAX_SCALE = 100;
   var STEP = 25;
 
+  // Максимальный процент
+  var MAX_FILTER_INTENSITY = 100;
+
   // Находим поле загрузки фото ,форму редактирования фото и кнопку закрытия формы
   var uploadFieldElement = document.querySelector('#upload-file');
   var changePhotoFormElement = document.querySelector('.img-upload__overlay');
@@ -39,91 +42,61 @@
   // var sliderPinElement = document.querySelector('.effect-level__pin');
 
   // Создаем массив фильтров(эффектов) для формы
-  var filters = [
-    {
-      name: 'none',
-      class: 'effects__preview--none',
-    },
-    {
-      name: 'chrome',
-      class: 'effects__preview--chrome',
+  var filters = {
+    chrome: {
+      className: 'effects__preview--chrome',
       filterName: 'grayscale',
       minValue: 0,
       maxValue: 1,
-      defaultPercentage: 100,
       getIntensity: function (percent) {
         // Значение фильтра в числовом эквиваленте для вставки в стили
         return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
       },
-      getIntensityValue: function (percent) {
-        // Значение фильтра для значения в инпут
-        return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
-      },
     },
-    {
-      name: 'sepia',
-      class: 'effects__preview--sepia',
+    sepia: {
+      className: 'effects__preview--sepia',
       filterName: 'sepia',
       minValue: 0,
       maxValue: 1,
-      defaultPercentage: 100,
       getIntensity: function (percent) {
         return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
       },
-      getIntensityValue: function (percent) {
-        return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
-      },
     },
-    {
-      name: 'marvin',
-      class: 'effects__preview--marvin',
+    marvin: {
+      className: 'effects__preview--marvin',
       filterName: 'invert',
       minValue: 0,
       maxValue: 100,
-      defaultPercentage: 100,
       getIntensity: function (percent) {
         return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + '%)');
       },
-      getIntensityValue: function (percent) {
-        return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
-      },
     },
-    {
-      name: 'phobos',
-      class: 'effects__preview--phobos',
+    phobos: {
+      className: 'effects__preview--phobos',
       filterName: 'blur',
       minValue: 0,
       maxValue: 3,
-      defaultPercentage: 100,
       getIntensity: function (percent) {
         return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + 'px)');
       },
-      getIntensityValue: function (percent) {
-        return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
-      },
     },
-    {
-      name: 'heat',
-      class: 'effects__preview--heat',
+    heat: {
+      className: 'effects__preview--heat',
       filterName: 'brightness',
       minValue: 1,
       maxValue: 3,
-      defaultPercentage: 100,
       getIntensity: function (percent) {
         return (this.filterName + '(' + (this.minValue + (this.maxValue - this.minValue) * percent / 100) + ')');
       },
-      getIntensityValue: function (percent) {
-        return (this.minValue + (this.maxValue - this.minValue) * percent / 100);
-      },
     },
-  ];
+  };
 
   // Создаем переменную текущего фильтра
-  var currentFilter = filters[0];
+  var currentFilter = null;
 
   // Функция закрытия окна формы по нажатию ESC
   var onEscCloseFormHandler = function (evt) {
-    if (evt.keyCode === window.util.ESC_KEY) {
+    if (evt.keyCode === window.utils.ESC_KEY_CODE) {
       hideFormHandler();
     }
   };
@@ -133,6 +106,7 @@
     changePhotoFormElement.classList.add('hidden');
     document.removeEventListener('keydown', onEscCloseFormHandler);
     body.classList.remove('modal-open');
+    uploadFieldElement.value = '';
   };
 
   // Функция открытия окна формы
@@ -145,24 +119,21 @@
 
   // Функция переключения нужного фильтра
   var applyFilter = function (input) {
-    previewImgElement.classList.remove(currentFilter.class);
-
-    for (var i = 0; i < filters.length; i++) {
-      if (input.value === filters[i].name) {
-        currentFilter = filters[i];
-      }
+    if (currentFilter) {
+      previewImgElement.classList.remove(currentFilter.className);
     }
 
-    if (currentFilter.name === 'none') {
+    currentFilter = filters[input.value];
+
+    if (currentFilter) {
+      sliderBoxElement.style.display = 'block';
+      previewImgElement.style.filter = currentFilter.getIntensity(MAX_FILTER_INTENSITY);
+      previewImgElement.classList.add(currentFilter.className);
+      sliderEffectInputElement.value = MAX_FILTER_INTENSITY;
+    } else {
       sliderBoxElement.style.display = 'none';
       previewImgElement.style.filter = 'none';
-    } else {
-      sliderBoxElement.style.display = 'block';
-      previewImgElement.style.filter = currentFilter.getIntensity(currentFilter.defaultPercentage);
     }
-
-    previewImgElement.classList.add(currentFilter.class);
-    sliderEffectInputElement.value = currentFilter.maxValue;
   };
 
   // Функция добавления обработчиков для смены фильтра
@@ -201,8 +172,7 @@
     previewImgElement.style.filter = 'none';
     previewImgElement.classList = 'none';
     sliderBoxElement.style.display = 'none';
-    uploadFieldElement.value = '';
-    currentFilter = filters[0];
+    currentFilter = null;
   };
 
   // Функция проверки формы на валидность
@@ -228,10 +198,10 @@
       } else if (hashtag.length > MAX_DIGITS_HASHTAG) {
         hashtagsFieldElement.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку');
         return;
-      } else if (hashtag.charAt(0) !== '#') {
+      } else if (hashtag.length > 1 && hashtag.charAt(0) !== '#') {
         hashtagsFieldElement.setCustomValidity('Хеш-тег должен начинаться с символа #');
         return;
-      } else if (pattern.test(hashtag) === false) {
+      } else if (hashtag.length > 1 && pattern.test(hashtag) === false) {
         hashtagsFieldElement.setCustomValidity('Хеш-тег должен состоять из букв и чисел и не может содержать спецсимволы (@, $ и т.п.)');
         return;
       } else if (uniqueHashtags.includes(hashtag) === true) {
@@ -240,7 +210,6 @@
       } else {
         hashtagsFieldElement.setCustomValidity('');
       }
-
       uniqueHashtags.push(hashtag);
     }
   };
@@ -252,19 +221,19 @@
 
   closeFormButtonElement.addEventListener('click', hideFormHandler);
   closeFormButtonElement.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.ENTER_KEY) {
+    if (evt.keyCode === window.utils.ENTER_KEY_CODE) {
       hideFormHandler();
     }
   });
 
   // Обработчики на поля формы для прекращения всплытия
   hashtagsFieldElement.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.ESC_KEY) {
+    if (evt.keyCode === window.utils.ESC_KEY_CODE) {
       evt.stopPropagation();
     }
   });
   descriptionFieldElement.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.ESC_KEY) {
+    if (evt.keyCode === window.utils.ESC_KEY_CODE) {
       evt.stopPropagation();
     }
   });
@@ -278,6 +247,6 @@
     var onePercent = lineCoords.width / 100; // Высчитываем 1% от длинны линии
     var valueSlider = Math.floor((evt.clientX - lineCoords.left) / onePercent); // Значение пина в процентах
     previewImgElement.style.filter = currentFilter.getIntensity(valueSlider); // Ставим значение фильтра
-    sliderEffectInputElement.value = currentFilter.getIntensityValue(valueSlider);
+    sliderEffectInputElement.value = valueSlider;
   });
 })();
