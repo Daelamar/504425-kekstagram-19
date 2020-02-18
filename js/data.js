@@ -85,6 +85,8 @@
   // Сохраняем массив из 25 фотографий
   var photosArray = createPhotoArray(NUMBER_OF_PHOTOS);
 
+  console.log(photosArray);
+
   // Для передачи в другие модули
   window.data = {
     photosArray: photosArray,
