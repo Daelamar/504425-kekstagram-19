@@ -53,15 +53,28 @@
     pictureCommentsLoaderElement.classList.add('hidden');
     bigPhotoElement.classList.remove('hidden');
     body.classList.add('modal-open');
+    document.addEventListener('keydown', onEscCloseBigPictureHandler);
   };
 
   // Функция закрытия большого фото
   var hideBigPictureHandler = function () {
     bigPhotoElement.classList.add('hidden');
     body.classList.remove('modal-open');
+    document.removeEventListener('keydown', onEscCloseBigPictureHandler);
   };
 
-  showBigPicture(window.data.photosArray[0]);
+  var onEscCloseBigPictureHandler = function (evt) {
+    if (evt.keyCode === window.utils.ESC_KEY_CODE) {
+      hideBigPictureHandler();
+    }
+  };
+
+  // showBigPicture(window.data.photosArray[0]);
 
   bigPhotoCloseElement.addEventListener('click', hideBigPictureHandler);
+
+  // Для передачи в другие модули
+  window.preview = {
+    fullSizePicture: showBigPicture,
+  };
 })();

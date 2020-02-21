@@ -18,11 +18,21 @@
     return photoElement;
   };
 
+  // Функция добавления обработчиков на маленькие фото для открытия большого
+  var addPhotoCardListener = function (image, index) {
+    image.addEventListener('click', function () {
+      window.preview.fullSizePicture(window.data.photosArray[index]);
+    });
+  };
+
   // Функция рендеринга маленьких фото на странице
   var renderPhotoList = function (array) {
     var fragment = document.createDocumentFragment();
+    var image;
     for (var i = 0; i < array.length; i++) {
-      fragment.appendChild(createPhotoElement(array[i]));
+      image = createPhotoElement(array[i]);
+      fragment.appendChild(image);
+      addPhotoCardListener(image, i);
     }
     photoListElement.appendChild(fragment);
   };
