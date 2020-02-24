@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+
   // Максимальный процент
   var MAX_FILTER_INTENSITY = 100;
 
@@ -14,9 +15,16 @@
   // Находим фото-превью
   var previewImgElement = document.querySelector('.img-upload__preview').firstElementChild;
 
-  // Находим ползунок и контейнер,в котором он движется
+  // Находим ползунок и контейнер,в котором он движется + заливку полозка
   var sliderLineElement = document.querySelector('.effect-level__line');
-  // var sliderPinElement = document.querySelector('.effect-level__pin');
+  var sliderPinElement = document.querySelector('.effect-level__pin');
+  var effectLevelDepthElement = sliderLineElement.querySelector('.effect-level__depth');
+
+  // Ограничение пина по координатам
+  var moveRestriction = {
+    COORDS_MIN_X: 1,
+    COORDS_MAX_X: 453,
+  };
 
   // Создаем массив фильтров(эффектов) для формы
   var filters = {
@@ -102,16 +110,48 @@
 
   addEffectListeners(effectInputsArray);
 
-  // Обработчик формы для установки эффекта насыщенности согласно значению ползунка
-  sliderLineElement.addEventListener('mouseup', function (evt) {
-    var lineCoords = sliderLineElement.getBoundingClientRect(); // Линия, по которой передвигается пин
-    var onePercent = lineCoords.width / 100; // Высчитываем 1% от длинны линии
-    var valueSlider = Math.floor((evt.clientX - lineCoords.left) / onePercent); // Значение пина в процентах
-    previewImgElement.style.filter = currentFilter.getIntensity(valueSlider); // Ставим значение фильтра
-    sliderEffectInputElement.value = valueSlider;
+  // Обработчик формы для перемещения ползунка и установки эффекта насыщенности согласно значению ползунка
+  sliderPinElement.addEventListener('mousedown', function (evt) {
+    var value = 0;
+
+    // Находим координаты нажатия мыши
+    var startCoords = {
+      x: evt.clientX,
+    };
+
+    var mouseMoveHandler = function (moveEvt) {
+      // Находим координаты движения ( стартовые - нынешние )
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+      };
+
+      // Перезаписываем стартовые
+      startCoords.x = moveEvt.clientX;
+
+      if (((sliderPinElement.offsetLeft - shift.x) > moveRestriction.COORDS_MIN_X) && ((sliderPinElement.offsetLeft - shift.x) < moveRestriction.COORDS_MAX_X)) {
+        sliderPinElement.style.left = (sliderPinElement.offsetLeft - shift.x) + 'px';
+
+        value = sliderPinElement.offsetLeft - shift.x;
+        var valueSlider = Math.ceil((value * 100 / moveRestriction.COORDS_MAX_X)); // Значение пина в процентах
+        effectLevelDepthElement.style.width = valueSlider + '%'; // Значение заливки
+
+        previewImgElement.style.filter = currentFilter.getIntensity(valueSlider); // Ставим значение фильтра
+        sliderEffectInputElement.value = valueSlider;
+      }
+    };
+
+    var mouseUpHandler = function () {
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+    };
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
   });
 
   var resetEffects = function () {
+    sliderPinElement.style.left = moveRestriction.COORDS_MAX_X + 'px';
+    effectLevelDepthElement.style.width = MAX_FILTER_INTENSITY + '%';
     previewImgElement.style.filter = 'none';
     previewImgElement.classList = '';
     sliderBoxElement.style.display = 'none';
