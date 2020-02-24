@@ -1,5 +1,9 @@
 'use strict';
 (function () {
+  // Максимальное  колличество комментариев к фотографии
+
+  var MAX_COMMENTS = 5;
+
   // Находим блок большого фото и кнопку его закрытия
   var bigPhotoElement = document.querySelector('.big-picture');
   var bigPhotoCloseElement = document.querySelector('.big-picture__cancel');
@@ -36,7 +40,7 @@
       commentsList.removeChild(commentsList.firstChild);
     }
 
-    for (var i = 0; i < array.length; i++) {
+    for (var i = 0; i < MAX_COMMENTS; i++) {
       fragment.appendChild(createCommentElement(array[i]));
     }
     commentsList.appendChild(fragment);
