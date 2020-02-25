@@ -19,20 +19,20 @@
   };
 
   // Функция добавления обработчиков на маленькие фото для открытия большого
-  var addPhotoCardListener = function (image, index, array) {
+  var addPhotoCardListener = function (image, index, data) {
     image.addEventListener('click', function () {
-      window.preview.fullSizePicture(array[index]);
+      window.preview.fullSizePicture(data[index]);
     });
   };
 
   // Функция рендеринга маленьких фото на странице
-  var renderPhotoList = function (array) {
+  var renderPhotoList = function (data) {
     var fragment = document.createDocumentFragment();
     var image;
-    for (var i = 0; i < array.length; i++) {
-      image = createPhotoElement(array[i]);
+    for (var i = 0; i < data.length; i++) {
+      image = createPhotoElement(data[i]);
       fragment.appendChild(image);
-      addPhotoCardListener(image, i, array);
+      addPhotoCardListener(image, i, data);
     }
     photoListElement.appendChild(fragment);
   };

@@ -7,11 +7,11 @@
   var changePhotoFormElement = document.querySelector('.img-upload__overlay');
   var closeFormButtonElement = document.querySelector('#upload-cancel');
 
-
+  var descriptionFieldElement = document.querySelector('.text__description');
   // var formElement = document.querySelector('.img-upload__form');
 
   // Функция закрытия окна формы по нажатию ESC
-  var onEscCloseFormHandler = function (evt) {
+  var escPressedHandler = function (evt) {
     if (evt.keyCode === window.utils.ESC_KEY_CODE) {
       hideFormHandler();
     }
@@ -20,7 +20,7 @@
   // Функция закрытия окна формы
   var hideFormHandler = function () {
     changePhotoFormElement.classList.add('hidden');
-    document.removeEventListener('keydown', onEscCloseFormHandler);
+    document.removeEventListener('keydown', escPressedHandler);
     body.classList.remove('modal-open');
     uploadFieldElement.value = '';
   };
@@ -29,7 +29,7 @@
   var showFormHandler = function () {
     resetForm();
     changePhotoFormElement.classList.remove('hidden');
-    document.addEventListener('keydown', onEscCloseFormHandler);
+    document.addEventListener('keydown', escPressedHandler);
     body.classList.add('modal-open');
   };
 
@@ -46,6 +46,14 @@
   closeFormButtonElement.addEventListener('keydown', function (evt) {
     if (evt.keyCode === window.utils.ENTER_KEY_CODE) {
       hideFormHandler();
+    }
+  });
+
+  // Обработчики на поля формы для прекращения всплытия
+
+  descriptionFieldElement.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.utils.ESC_KEY_CODE) {
+      evt.stopPropagation();
     }
   });
 

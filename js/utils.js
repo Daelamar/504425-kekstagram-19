@@ -3,6 +3,8 @@
   var ESC_KEY_CODE = 27;
   var ENTER_KEY_CODE = 13;
 
+  var TIMEOUT = 10000;
+
   // Функция случайного числа в диапазоне
   var getRandomNumber = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -30,11 +32,9 @@
     errorElement.style.zIndex = '10';
     errorElement.textContent = errorMessage;
     document.body.appendChild(errorElement);
-    document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ESC_KEY_CODE) {
-        errorElement.remove();
-      }
-    });
+    setTimeout(function () {
+      errorElement.remove();
+    }, TIMEOUT);
   };
 
   // Для передачи в другие модули
