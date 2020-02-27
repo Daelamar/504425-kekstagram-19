@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   // Адресс сервера, на который должны отправиться данные
-  var URL_UPLOAD = '';
+  var URL_UPLOAD = 'https://js.dump.academy/kekstagram';
   var URL_DOWNLOAD = 'https://js.dump.academy/kekstagram/data';
 
   // Значение времени ожидания
@@ -71,8 +71,19 @@
     xhr.send();
   };
 
+  var uploadData = function (data, onSuccess, onError) {
+    var xhr = setupHttpRequest(onSuccess, onError);
+
+    // Инициируем запрос
+    xhr.open('POST', URL_UPLOAD);
+
+    // Отправляем
+    xhr.send(data);
+  };
+
   // Для передачи в другие модули
   window.backend = {
     load: downloadData,
+    save: uploadData
   };
 })();

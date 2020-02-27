@@ -37,8 +37,6 @@
     photoListElement.appendChild(fragment);
   };
 
-  // renderPhotoList(window.data.photosArray);
-
   // Загружаем данные и при положительном результате отрисовываем фотографии
   window.backend.load(renderPhotoList, window.utils.onError);
 })();
