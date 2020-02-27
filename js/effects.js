@@ -149,7 +149,7 @@
     document.addEventListener('mouseup', mouseUpHandler);
   });
 
-  var resetEffects = function () {
+  var reset = function () {
     sliderPinElement.style.left = moveRestriction.COORDS_MAX_X + 'px';
     effectLevelDepthElement.style.width = MAX_FILTER_INTENSITY + '%';
     previewImgElement.style.filter = 'none';
@@ -160,6 +160,6 @@
 
   // Для передачи в другие модули
   window.effects = {
-    toDefault: resetEffects,
+    toDefault: reset,
   };
 })();

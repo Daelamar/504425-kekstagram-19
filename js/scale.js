@@ -7,13 +7,13 @@
 
   // Находим кнопки размера фотографии и поле для значения, так же саму фото-превью
   var changePhotoFormElement = document.querySelector('.img-upload__overlay');
-  var smallerScaleButtonElement = changePhotoFormElement.querySelector('.scale__control--smaller');
-  var biggerScaleButtonElement = changePhotoFormElement.querySelector('.scale__control--bigger');
+  var decreaseButtonElement = changePhotoFormElement.querySelector('.scale__control--smaller');
+  var increaseButtonElement = changePhotoFormElement.querySelector('.scale__control--bigger');
   var scaleValueElement = changePhotoFormElement.querySelector('.scale__control--value');
   var previewImgElement = document.querySelector('.img-upload__preview').firstElementChild;
 
   // Функция уменьшения размера фото-превью в форме
-  var smallerPreviewImgHandler = function () {
+  var decreasePreviewImgHandler = function () {
     var scale = parseInt(scaleValueElement.value, 10);
     if (scale > MIN_SCALE) {
       previewImgElement.style.transform = 'scale(' + (scale - STEP) / 100 + ')';
@@ -22,7 +22,7 @@
   };
 
   // Функция увеличения размера фото-превью в форме
-  var biggerPreviewImgHandler = function () {
+  var increasePreviewImgHandler = function () {
     var scale = parseInt(scaleValueElement.value, 10);
     if (scale < MAX_SCALE) {
       previewImgElement.style.transform = 'scale(' + (scale + STEP) / 100 + ')';
@@ -30,17 +30,17 @@
     }
   };
 
-  var resetScale = function () {
+  var reset = function () {
     scaleValueElement.value = MAX_SCALE + '%';
     previewImgElement.style.transform = 'none';
   };
 
   // Обработчики на поля формы (изменение масштаба )
-  smallerScaleButtonElement.addEventListener('click', smallerPreviewImgHandler);
-  biggerScaleButtonElement.addEventListener('click', biggerPreviewImgHandler);
+  decreaseButtonElement.addEventListener('click', decreasePreviewImgHandler);
+  increaseButtonElement.addEventListener('click', increasePreviewImgHandler);
 
   // Для передачи в другие модули
   window.scale = {
-    toDefault: resetScale,
+    toDefault: reset,
   };
 })();
