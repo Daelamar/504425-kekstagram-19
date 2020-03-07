@@ -8,9 +8,34 @@
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
+  var DEBOUNCE_INTERVAL = 500;
+
+  var lastTimeout;
+
+  // Функция устранения дребезга
+  var debounce = function (cb) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(cb, DEBOUNCE_INTERVAL);
+  };
+
   // Функция случайного числа в диапазоне
   var getRandomNumber = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  // Функция перемешивания массива в случайном порядке
+  var getShuffleArray = function (array) {
+    var result = [];
+
+    while (array.length > 0) {
+      var randomIndex = getRandomNumber(0, array.length - 1);
+      var element = array.splice(randomIndex, 1)[0];
+      result.push(element);
+    }
+
+    return result;
   };
 
   // Функция возврата случайного элемента из массива
@@ -79,27 +104,6 @@
     document.addEventListener('keydown', escCloseHandler);
     document.addEventListener('click', clickCloseHandler);
   };
-  // // Функция создания сообщения об ошибке ( при загрузке/отправке данных )
-  // var showErrorMessageHandler = function (errorMessage) {
-  //   var errorElement = document.createElement('div');
-  //   errorElement.classList.add('error-message');
-  //   errorElement.style.backgroundColor = 'white';
-  //   errorElement.style.color = 'black';
-  //   errorElement.style.textAlign = 'center';
-  //   errorElement.style.position = 'fixed';
-  //   errorElement.style.width = '400px';
-  //   errorElement.style.height = '100px';
-  //   errorElement.style.border = '2px solid black';
-  //   errorElement.style.left = '38%';
-  //   errorElement.style.top = '20%';
-  //   errorElement.style.fontSize = '28px';
-  //   errorElement.style.zIndex = '10';
-  //   errorElement.textContent = errorMessage;
-  //   document.body.appendChild(errorElement);
-  //   setTimeout(function () {
-  //     errorElement.remove();
-  //   }, TIMEOUT);
-  // };
 
   // Для передачи в другие модули
   window.utils = {
@@ -107,6 +111,8 @@
     getRandomItem: getRandomItem,
     onError: onError,
     onSuccess: onSuccess,
+    getShuffleArray: getShuffleArray,
+    debounce: debounce,
     ESC_KEY_CODE: ESC_KEY_CODE,
     ENTER_KEY_CODE: ENTER_KEY_CODE,
   };

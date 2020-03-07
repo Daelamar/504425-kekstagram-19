@@ -6,6 +6,8 @@
   // Находим блок для отрисовки маленьких фотографий пользователей
   var photoListElement = document.querySelector('.pictures');
 
+  var defaultPhotos = false;
+
   // Функция заполнения html-элементов маленькой фотографии ( адрес,комментарий и т.д. )
   var createPhotoElement = function (photo) {
     var photoElement = photoTemplate.cloneNode(true);
@@ -27,6 +29,18 @@
 
   // Функция рендеринга маленьких фото на странице
   var renderPhotoList = function (data) {
+    if (!defaultPhotos) {
+      defaultPhotos = data;
+    }
+
+    var smallPictures = photoListElement.querySelectorAll('.picture');
+
+    smallPictures.forEach(function (item) {
+      if (item.classList.contains('picture')) {
+        photoListElement.removeChild(item);
+      }
+    });
+
     var fragment = document.createDocumentFragment();
     var image;
     for (var i = 0; i < data.length; i++) {
@@ -35,8 +49,19 @@
       addPhotoCardListener(image, i, data);
     }
     photoListElement.appendChild(fragment);
+    window.filters.listElement.classList.remove('img-filters--inactive');
+  };
+
+  var getDefaultPhotoList = function () {
+    return defaultPhotos;
   };
 
   // Загружаем данные и при положительном результате отрисовываем фотографии
   window.backend.load(renderPhotoList, window.utils.onError);
+
+  // Для передачи в другие модули
+  window.gallery = {
+    getDefaultPhotoList: getDefaultPhotoList,
+    renderPhotoList: renderPhotoList
+  };
 })();
