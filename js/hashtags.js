@@ -1,9 +1,8 @@
 'use strict';
 (function () {
   var MAX_HASHTAGS_VALUE = 5;
-  var MAX_DIGITS_HASHTAG = 20;
 
-  var PATTERN = /^[a-zA-Z0-9#]+$/; // Паттерн значений
+  var PATTERN = /^#[а-яА-ЯёЁA-Za-z0-9_]{1,19}$/; // Паттерн значений
 
   // Находим поля хештегов
   var inputElement = document.querySelector('.text__hashtags');
@@ -28,14 +27,8 @@
       } else if (hashtag.length === 1 && hashtag.charAt(0) === '#') {
         inputElement.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
         return;
-      } else if (hashtag.length > MAX_DIGITS_HASHTAG) {
-        inputElement.setCustomValidity('Максимальная длина одного хэш-тега 20 символов, включая решётку');
-        return;
-      } else if (hashtag.length > 1 && hashtag.charAt(0) !== '#') {
-        inputElement.setCustomValidity('Хеш-тег должен начинаться с символа #');
-        return;
       } else if (hashtag.length > 1 && PATTERN.test(hashtag) === false) {
-        inputElement.setCustomValidity('Хеш-тег должен состоять из букв и чисел и не может содержать спецсимволы (@, $ и т.п.)');
+        inputElement.setCustomValidity('Хеш-тег не может содержать спецсимволы (@, $ и т.п.), должен начинаться с символа #, максимальная длина одного хэш-тега 20 символов, включая решётку');
         return;
       } else if (uniqueHashtags.includes(hashtag) === true) {
         inputElement.setCustomValidity('Не может быть два одинаковых хеш-тега');

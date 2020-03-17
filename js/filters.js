@@ -20,10 +20,10 @@
   // Функция отрисовки 10 случайных фото из массива
   var shuffledPhotos = function () {
     var randomPhotos = [];
-    var randomPhotos = window.utils.getRandomItems(window.gallery.getPhotos().slice(), RANDOM_PHOTO_NUMBER);
+    var randomItems = window.utils.getRandomItems(window.gallery.getPhotos().slice(), RANDOM_PHOTO_NUMBER);
 
     for (var i = 0; i < RANDOM_PHOTO_NUMBER; i++) {
-      randomPhotos.push(randomPhotos[i]);
+      randomPhotos.push(randomItems[i]);
     }
 
     window.gallery.renderPhotoList(randomPhotos);

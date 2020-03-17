@@ -67,14 +67,14 @@
 
   // Функция для рендеринга полноэкранной фотографии
   var showBigPicture = function (photo) {
+    bigPhotoElement.classList.remove('hidden');
+    pictureCommentsLoaderElement.classList.remove('hidden');
     pictureImgElement.setAttribute('src', photo.url);
     pictureLikesCountElement.textContent = photo.likes;
     pictureCaptionElement.textContent = photo.description;
     pictureCommentsCountElement.textContent = photo.comments.length;
     bigPhotoCommentsList.innerHTML = '';
-    bigPhotoElement.classList.remove('hidden');
     body.classList.add('modal-open');
-    pictureCommentsLoaderElement.classList.remove('hidden');
     currentComments = photo.comments;
     loadComments(currentComments);
     checkCommentsLength(currentComments);

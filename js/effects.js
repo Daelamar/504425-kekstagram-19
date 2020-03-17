@@ -160,9 +160,7 @@
     previewImgElement.classList = '';
     sliderBoxElement.style.display = 'none';
     currentFilter = null;
-    for (var i = 0; i < effectInputElements.length; i++) {
-      effectInputElements[i].checked = false;
-    }
+    effectInputElements[0].checked = true;
     inputElement.value = '';
     descriptionElement.value = '';
   };
