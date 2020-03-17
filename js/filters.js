@@ -18,20 +18,20 @@
   };
 
   // Функция отрисовки 10 случайных фото из массива
-  var renderRandomPhotos = function () {
+  var shuffledPhotos = function () {
     var randomPhotos = [];
-    var array = window.utils.getShuffleArray(window.gallery.getDefaultPhotoList().slice());
+    var randomPhotos = window.utils.getRandomItems(window.gallery.getPhotos().slice(), RANDOM_PHOTO_NUMBER);
 
     for (var i = 0; i < RANDOM_PHOTO_NUMBER; i++) {
-      randomPhotos.push(array[i]);
+      randomPhotos.push(randomPhotos[i]);
     }
 
     window.gallery.renderPhotoList(randomPhotos);
   };
 
   // Функция отрисовки фото по количеству комментариев
-  var renderPhotosByComments = function () {
-    var array = window.gallery.getDefaultPhotoList().slice().sort(function (left, right) {
+  var popularPhotos = function () {
+    var array = window.gallery.getPhotos().slice().sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
     window.gallery.renderPhotoList(array);
@@ -41,13 +41,13 @@
   var filterButtonClickHandler = function (evt) {
     switch (evt.target.id) {
       case 'filter-default':
-        window.utils.debounce(window.gallery.renderPhotoList(window.gallery.getDefaultPhotoList()));
+        window.utils.debounce(window.gallery.renderPhotoList(window.gallery.getPhotos()));
         break;
       case 'filter-random':
-        window.utils.debounce(renderRandomPhotos);
+        window.utils.debounce(shuffledPhotos);
         break;
       case 'filter-discussed':
-        window.utils.debounce(renderPhotosByComments);
+        window.utils.debounce(popularPhotos);
         break;
     }
   };

@@ -26,21 +26,16 @@
   };
 
   // Функция перемешивания массива в случайном порядке
-  var getShuffleArray = function (array) {
-    var result = [];
+  var getRandomItems = function (items, count) {
+    var shuffledItems = [];
 
-    while (array.length > 0) {
-      var randomIndex = getRandomNumber(0, array.length - 1);
-      var element = array.splice(randomIndex, 1)[0];
-      result.push(element);
+    while (shuffledItems.length < count) {
+      var randomIndex = getRandomNumber(0, items.length - 1);
+      var element = items.splice(randomIndex, 1)[0];
+      shuffledItems.push(element);
     }
 
-    return result;
-  };
-
-  // Функция возврата случайного элемента из массива
-  var getRandomItem = function (array) {
-    return array[getRandomNumber(0, array.length - 1)];
+    return shuffledItems;
   };
 
   // Функция поведения формы после удачной загрузке
@@ -108,10 +103,9 @@
   // Для передачи в другие модули
   window.utils = {
     getRandomNumber: getRandomNumber,
-    getRandomItem: getRandomItem,
     onError: onError,
     onSuccess: onSuccess,
-    getShuffleArray: getShuffleArray,
+    getRandomItems: getRandomItems,
     debounce: debounce,
     ESC_KEY_CODE: ESC_KEY_CODE,
     ENTER_KEY_CODE: ENTER_KEY_CODE,

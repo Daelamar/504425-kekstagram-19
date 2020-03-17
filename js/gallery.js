@@ -23,7 +23,7 @@
   // Функция добавления обработчиков на маленькие фото для открытия большого
   var addPhotoCardListener = function (image, index, data) {
     image.addEventListener('click', function () {
-      window.preview.fullSizePicture(data[index]);
+      window.preview.showBigPicture(data[index]);
     });
   };
 
@@ -52,7 +52,7 @@
     window.filters.listElement.classList.remove('img-filters--inactive');
   };
 
-  var getDefaultPhotoList = function () {
+  var getPhotos = function () {
     return defaultPhotos;
   };
 
@@ -61,7 +61,7 @@
 
   // Для передачи в другие модули
   window.gallery = {
-    getDefaultPhotoList: getDefaultPhotoList,
+    getPhotos: getPhotos,
     renderPhotoList: renderPhotoList
   };
 })();

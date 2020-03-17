@@ -23,12 +23,12 @@
   var currentComments;
 
   // Функция заполнения html-элементов комментария к большому фото ( аватар, текст )
-  var createCommentElement = function (array) {
+  var createCommentElement = function (comments) {
     var commentElement = commentsElements.cloneNode(true);
 
-    commentElement.querySelector('.social__picture').setAttribute('src', array.avatar);
-    commentElement.querySelector('.social__picture').setAttribute('alt', array.name);
-    commentElement.querySelector('.social__text').textContent = array.message;
+    commentElement.querySelector('.social__picture').setAttribute('src', comments.avatar);
+    commentElement.querySelector('.social__picture').setAttribute('alt', comments.name);
+    commentElement.querySelector('.social__text').textContent = comments.message;
 
     return commentElement;
   };
@@ -99,6 +99,6 @@
 
   // Для передачи в другие модули
   window.preview = {
-    fullSizePicture: showBigPicture,
+    showBigPicture: showBigPicture,
   };
 })();
