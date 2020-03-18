@@ -46,11 +46,11 @@
     window.editor.hide();
     mainElement.appendChild(success);
 
-    var escCloseHandler = function (evt) {
+    var escPressedHandler = function (evt) {
       if (evt.keyCode === window.utils.ESC_KEY_CODE) {
         mainElement.removeChild(success);
       }
-      document.removeEventListener('keydown', escCloseHandler);
+      document.removeEventListener('keydown', escPressedHandler);
     };
 
     var clickCloseHandler = function () {
@@ -63,7 +63,7 @@
         mainElement.removeChild(success);
       }
     });
-    document.addEventListener('keydown', escCloseHandler);
+    document.addEventListener('keydown', escPressedHandler);
     document.addEventListener('click', clickCloseHandler);
   };
 
@@ -79,16 +79,16 @@
     innerTitleElement.appendChild(errorText);
     errorText.textContent = errorMessage;
 
-    var escCloseHandler = function (evt) {
+    var escPressedOnSucessHandler = function (evt) {
       if (evt.keyCode === window.utils.ESC_KEY_CODE) {
         mainElement.removeChild(error);
       }
-      document.removeEventListener('keydown', escCloseHandler);
+      successTemplate.removeEventListener('keydown', escPressedOnSucessHandler);
     };
 
-    var clickCloseHandler = function () {
+    var setupClickHandler = function () {
       mainElement.removeChild(error);
-      document.removeEventListener('click', clickCloseHandler);
+      successTemplate.removeEventListener('click', setupClickHandler);
     };
 
     closeElement.addEventListener('click', function (evt) {
@@ -96,8 +96,8 @@
         mainElement.removeChild(error);
       }
     });
-    document.addEventListener('keydown', escCloseHandler);
-    document.addEventListener('click', clickCloseHandler);
+    successTemplate.addEventListener('keydown', escPressedOnSucessHandler);
+    successTemplate.addEventListener('click', setupClickHandler);
   };
 
   // Для передачи в другие модули

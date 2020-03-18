@@ -19,6 +19,7 @@
   var pictureVisibleCommentsElement = pictureCommentsCountMainElement.querySelector('.comments-count-amount');
   var pictureCommentsCountElement = bigPhotoElement.querySelector('.comments-count');
   var pictureCommentsLoaderElement = bigPhotoElement.querySelector('.comments-loader');
+  // var bigPhotoCommentsListLength = bigPhotoCommentsList.querySelectorAll('.social__comment').length;
   var body = document.querySelector('body');
   var currentComments;
 
@@ -69,7 +70,7 @@
   var showBigPicture = function (photo) {
     bigPhotoElement.classList.remove('hidden');
     pictureCommentsLoaderElement.classList.remove('hidden');
-    pictureImgElement.setAttribute('src', photo.url);
+    pictureImgElement.src = photo.url;
     pictureLikesCountElement.textContent = photo.likes;
     pictureCaptionElement.textContent = photo.description;
     pictureCommentsCountElement.textContent = photo.comments.length;
@@ -79,17 +80,17 @@
     loadComments(currentComments);
     checkCommentsLength(currentComments);
     pictureCommentsLoaderElement.addEventListener('click', onLoadCommentsClick);
-    document.addEventListener('keydown', onEscCloseBigPictureHandler);
+    document.addEventListener('keydown', onEscPressedHandler);
   };
 
   // Функция закрытия большого фото
   var hideBigPictureHandler = function () {
     bigPhotoElement.classList.add('hidden');
     body.classList.remove('modal-open');
-    document.removeEventListener('keydown', onEscCloseBigPictureHandler);
+    document.removeEventListener('keydown', onEscPressedHandler);
   };
 
-  var onEscCloseBigPictureHandler = function (evt) {
+  var onEscPressedHandler = function (evt) {
     if (evt.keyCode === window.utils.ESC_KEY_CODE) {
       hideBigPictureHandler();
     }

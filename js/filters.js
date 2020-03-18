@@ -31,17 +31,22 @@
 
   // Функция отрисовки фото по количеству комментариев
   var popularPhotos = function () {
-    var array = window.gallery.getPhotos().slice().sort(function (left, right) {
+    var photos = window.gallery.getPhotos().slice().sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
-    window.gallery.renderPhotoList(array);
+    window.gallery.renderPhotoList(photos);
+  };
+
+  // Функция отрисовки фото по умолчанию
+  var defaultPhotos = function () {
+    window.gallery.renderPhotoList(window.gallery.getPhotos());
   };
 
   // Функция рендоринга фото в зависимости от фильтра
   var filterButtonClickHandler = function (evt) {
     switch (evt.target.id) {
       case 'filter-default':
-        window.utils.debounce(window.gallery.renderPhotoList(window.gallery.getPhotos()));
+        window.utils.debounce(defaultPhotos);
         break;
       case 'filter-random':
         window.utils.debounce(shuffledPhotos);

@@ -163,6 +163,7 @@
     effectInputElements[0].checked = true;
     inputElement.value = '';
     descriptionElement.value = '';
+    inputElement.style.borderColor = 'rgb(238, 238, 238)';
   };
 
   // Для передачи в другие модули

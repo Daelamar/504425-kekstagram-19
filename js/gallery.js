@@ -36,9 +36,7 @@
     var smallPictures = photoListElement.querySelectorAll('.picture');
 
     smallPictures.forEach(function (item) {
-      if (item.classList.contains('picture')) {
-        photoListElement.removeChild(item);
-      }
+      photoListElement.removeChild(item);
     });
 
     var fragment = document.createDocumentFragment();

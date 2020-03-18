@@ -13,12 +13,12 @@
   // Функция закрытия окна формы по нажатию ESC
   var escPressedHandler = function (evt) {
     if (evt.keyCode === window.utils.ESC_KEY_CODE) {
-      hideFormHandler();
+      closeButtonPressedHandler();
     }
   };
 
   // Функция закрытия окна формы
-  var hideFormHandler = function () {
+  var closeButtonPressedHandler = function () {
     changePhotoFormElement.classList.add('hidden');
     document.removeEventListener('keydown', escPressedHandler);
     body.classList.remove('modal-open');
@@ -26,7 +26,7 @@
   };
 
   // Функция открытия окна формы
-  var showFormHandler = function () {
+  var fileUploadHandler = function () {
     resetForm();
     changePhotoFormElement.classList.remove('hidden');
     document.addEventListener('keydown', escPressedHandler);
@@ -40,12 +40,12 @@
   };
 
   // Обработчики на поля формы (закрытие, открытие)
-  uploadFieldElement.addEventListener('change', showFormHandler);
+  uploadFieldElement.addEventListener('change', fileUploadHandler);
 
-  closeFormButtonElement.addEventListener('click', hideFormHandler);
+  closeFormButtonElement.addEventListener('click', closeButtonPressedHandler);
   closeFormButtonElement.addEventListener('keydown', function (evt) {
     if (evt.keyCode === window.utils.ENTER_KEY_CODE) {
-      hideFormHandler();
+      closeButtonPressedHandler();
     }
   });
 
@@ -64,6 +64,6 @@
 
   // Для передачи в другие модули
   window.editor = {
-    hide: hideFormHandler,
+    hide: closeButtonPressedHandler,
   };
 })();
