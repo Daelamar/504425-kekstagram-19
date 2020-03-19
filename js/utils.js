@@ -55,7 +55,7 @@
 
     var clickCloseHandler = function () {
       mainElement.removeChild(success);
-      document.removeEventListener('click', clickCloseHandler);
+      successTemplate.removeEventListener('click', clickCloseHandler);
     };
 
     closeElement.addEventListener('click', function (evt) {
@@ -63,8 +63,8 @@
         mainElement.removeChild(success);
       }
     });
-    document.addEventListener('keydown', escPressedHandler);
-    document.addEventListener('click', clickCloseHandler);
+    successTemplate.addEventListener('keydown', escPressedHandler);
+    successTemplate.addEventListener('click', clickCloseHandler);
   };
 
   // Функция поведения формы после неудачной загрузки

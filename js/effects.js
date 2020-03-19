@@ -92,6 +92,9 @@
     // Текущий фильтр ставим из значения чекбокса
     currentFilter = filters[input.value];
 
+    sliderPinElement.style.left = MoveRestriction.COORDS_MAX_X + 'px';
+    effectLevelDepthElement.style.width = MAX_FILTER_INTENSITY + '%';
+
     if (currentFilter) {
       sliderBoxElement.style.display = 'block';
       previewImgElement.style.filter = currentFilter.getIntensity(MAX_FILTER_INTENSITY);
@@ -157,7 +160,9 @@
     sliderPinElement.style.left = MoveRestriction.COORDS_MAX_X + 'px';
     effectLevelDepthElement.style.width = MAX_FILTER_INTENSITY + '%';
     previewImgElement.style.filter = 'none';
-    previewImgElement.classList = '';
+    if (currentFilter) {
+      previewImgElement.classList.remove(currentFilter.className);
+    }
     sliderBoxElement.style.display = 'none';
     currentFilter = null;
     effectInputElements[0].checked = true;

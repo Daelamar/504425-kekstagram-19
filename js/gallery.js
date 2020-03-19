@@ -41,11 +41,13 @@
 
     var fragment = document.createDocumentFragment();
     var image;
-    for (var i = 0; i < data.length; i++) {
-      image = createPhotoElement(data[i]);
+
+    data.forEach(function (i) {
+      image = createPhotoElement(i);
       fragment.appendChild(image);
       addPhotoCardListener(image, i, data);
-    }
+    });
+
     photoListElement.appendChild(fragment);
     window.filters.listElement.classList.remove('img-filters--inactive');
   };

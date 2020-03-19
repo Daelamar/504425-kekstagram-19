@@ -18,23 +18,31 @@
   };
 
   // Функция закрытия окна формы
-  var closeButtonPressedHandler = function () {
+  var hide = function () {
     changePhotoFormElement.classList.add('hidden');
     document.removeEventListener('keydown', escPressedHandler);
     body.classList.remove('modal-open');
     uploadFieldElement.value = '';
   };
 
+  var closeButtonPressedHandler = function () {
+    hide();
+  };
+
   // Функция открытия окна формы
-  var fileUploadHandler = function () {
-    resetForm();
+  var show = function () {
     changePhotoFormElement.classList.remove('hidden');
     document.addEventListener('keydown', escPressedHandler);
     body.classList.add('modal-open');
   };
 
+  var fileUploadHandler = function () {
+    reset();
+    show();
+  };
+
   // Функция сброса данных формы
-  var resetForm = function () {
+  var reset = function () {
     window.scale.toDefault();
     window.effects.toDefault();
   };
@@ -64,6 +72,6 @@
 
   // Для передачи в другие модули
   window.editor = {
-    hide: closeButtonPressedHandler,
+    hide: hide,
   };
 })();
