@@ -19,7 +19,6 @@
   var pictureVisibleCommentsElement = pictureCommentsCountMainElement.querySelector('.comments-count-amount');
   var pictureCommentsCountElement = bigPhotoElement.querySelector('.comments-count');
   var pictureCommentsLoaderElement = bigPhotoElement.querySelector('.comments-loader');
-  // var bigPhotoCommentsListLength = bigPhotoCommentsList.querySelectorAll('.social__comment').length;
   var body = document.querySelector('body');
   var currentComments;
 
@@ -27,8 +26,8 @@
   var createCommentElement = function (comments) {
     var commentElement = commentsElements.cloneNode(true);
 
-    commentElement.querySelector('.social__picture').setAttribute('src', comments.avatar);
-    commentElement.querySelector('.social__picture').setAttribute('alt', comments.name);
+    commentElement.querySelector('.social__picture').src = comments.avatar;
+    commentElement.querySelector('.social__picture').alt = comments.name;
     commentElement.querySelector('.social__text').textContent = comments.message;
 
     return commentElement;
@@ -66,8 +65,12 @@
     checkCommentsLength(currentComments);
   };
 
+  var mainElement = document.querySelector('main');
+
   // Функция для рендеринга полноэкранной фотографии
   var showBigPicture = function (photo) {
+    bigPhotoElement.remove();
+
     bigPhotoElement.classList.remove('hidden');
     pictureCommentsLoaderElement.classList.remove('hidden');
     pictureImgElement.src = photo.url;
@@ -81,6 +84,8 @@
     checkCommentsLength(currentComments);
     pictureCommentsLoaderElement.addEventListener('click', onLoadCommentsClick);
     document.addEventListener('keydown', onEscPressedHandler);
+
+    mainElement.append(bigPhotoElement);
   };
 
   // Функция закрытия большого фото

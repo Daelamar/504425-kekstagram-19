@@ -50,12 +50,12 @@
       if (evt.keyCode === window.utils.ESC_KEY_CODE) {
         mainElement.removeChild(success);
       }
-      document.removeEventListener('keydown', escPressedHandler);
+      success.removeEventListener('keydown', escPressedHandler);
     };
 
     var clickCloseHandler = function () {
       mainElement.removeChild(success);
-      successTemplate.removeEventListener('click', clickCloseHandler);
+      success.removeEventListener('click', clickCloseHandler);
     };
 
     closeElement.addEventListener('click', function (evt) {
@@ -63,8 +63,8 @@
         mainElement.removeChild(success);
       }
     });
-    successTemplate.addEventListener('keydown', escPressedHandler);
-    successTemplate.addEventListener('click', clickCloseHandler);
+    success.addEventListener('keydown', escPressedHandler);
+    success.addEventListener('click', clickCloseHandler);
   };
 
   // Функция поведения формы после неудачной загрузки
@@ -83,12 +83,12 @@
       if (evt.keyCode === window.utils.ESC_KEY_CODE) {
         mainElement.removeChild(error);
       }
-      successTemplate.removeEventListener('keydown', escPressedOnSucessHandler);
+      error.removeEventListener('keydown', escPressedOnSucessHandler);
     };
 
     var setupClickHandler = function () {
       mainElement.removeChild(error);
-      successTemplate.removeEventListener('click', setupClickHandler);
+      error.removeEventListener('click', setupClickHandler);
     };
 
     closeElement.addEventListener('click', function (evt) {
@@ -96,8 +96,8 @@
         mainElement.removeChild(error);
       }
     });
-    successTemplate.addEventListener('keydown', escPressedOnSucessHandler);
-    successTemplate.addEventListener('click', setupClickHandler);
+    error.addEventListener('keydown', escPressedOnSucessHandler);
+    error.addEventListener('click', setupClickHandler);
   };
 
   // Для передачи в другие модули

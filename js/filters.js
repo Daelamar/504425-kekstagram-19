@@ -18,7 +18,7 @@
   };
 
   // Функция отрисовки 10 случайных фото из массива
-  var shuffledPhotos = function () {
+  var getShuffledPhotos = function () {
     var randomPhotos = [];
     var randomItems = window.utils.getRandomItems(window.gallery.getPhotos().slice(), RANDOM_PHOTO_NUMBER);
 
@@ -30,7 +30,7 @@
   };
 
   // Функция отрисовки фото по количеству комментариев
-  var popularPhotos = function () {
+  var getPopularPhotos = function () {
     var photos = window.gallery.getPhotos().slice().sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
@@ -38,7 +38,7 @@
   };
 
   // Функция отрисовки фото по умолчанию
-  var defaultPhotos = function () {
+  var getDefaultPhotos = function () {
     window.gallery.renderPhotoList(window.gallery.getPhotos());
   };
 
@@ -46,13 +46,13 @@
   var filterButtonClickHandler = function (evt) {
     switch (evt.target.id) {
       case 'filter-default':
-        window.utils.debounce(defaultPhotos);
+        window.utils.debounce(getDefaultPhotos);
         break;
       case 'filter-random':
-        window.utils.debounce(shuffledPhotos);
+        window.utils.debounce(getShuffledPhotos);
         break;
       case 'filter-discussed':
-        window.utils.debounce(popularPhotos);
+        window.utils.debounce(getPopularPhotos);
         break;
     }
   };

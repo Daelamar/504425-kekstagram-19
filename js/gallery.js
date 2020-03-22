@@ -42,11 +42,11 @@
     var fragment = document.createDocumentFragment();
     var image;
 
-    data.forEach(function (i) {
-      image = createPhotoElement(i);
+    for (var i = 0; i < data.length; i++) {
+      image = createPhotoElement(data[i]);
       fragment.appendChild(image);
       addPhotoCardListener(image, i, data);
-    });
+    }
 
     photoListElement.appendChild(fragment);
     window.filters.listElement.classList.remove('img-filters--inactive');
@@ -58,6 +58,7 @@
 
   // Загружаем данные и при положительном результате отрисовываем фотографии
   window.backend.load(renderPhotoList, window.utils.onError);
+
 
   // Для передачи в другие модули
   window.gallery = {

@@ -2,7 +2,7 @@
 (function () {
   var MAX_HASHTAGS_VALUE = 5;
 
-  var PATTERN = /^#[а-яА-ЯёЁA-Za-z0-9_]{1,19}$/; // Паттерн значений
+  var PATTERN = /^#[а-яА-ЯёЁA-Za-z0-9]{1,19}$/; // Паттерн значений
 
   // Находим поля хештегов
   var inputElement = document.querySelector('.text__hashtags');
